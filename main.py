@@ -1,39 +1,46 @@
-import pandas as pd
+from kivy.app import App
+import kivy.uix.boxlayout
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
 
-# Definir os alimentos
-alimentos = pd.DataFrame({'Alimento': ['Arroz', 'Feijão', 'Frango'],
-                         'Calorias (kcal)': [130, 150, 220],
-                         'Proteínas (g)': [2.5, 9, 35],
-                         'Gorduras (g)': [1, 2, 8],
-                         'Carboidratos (g)': [29, 25, 0]})
 
-# Solicitar a quantidade de cada alimento em porções
-porcao_arroz = float(input("Quantas porções de arroz você deseja consumir? "))
-porcao_feijao = float(input("Quantas porções de feijão você deseja consumir? "))
-porcao_frango = float(input("Quantas porções de frango você deseja consumir? "))
+class RegisterApp(App):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.status = None
+        self.email = None
+        self.password = None
+        self.username = None
 
-# Calcular a ingestão total de calorias
-calorias = porcao_arroz * alimentos.at[0, 'Calorias (kcal)'] + \
-           porcao_feijao * alimentos.at[1, 'Calorias (kcal)'] + \
-           porcao_frango * alimentos.at[2, 'Calorias (kcal)']
+    def build(self):
+        self.username = TextInput(hint_text="Username")
+        self.password = TextInput(hint_text="Password", password=True)
+        self.email = TextInput(hint_text="Email")
+        self.status = Label(text="")
 
-# Calcular a ingestão total de proteínas
-proteinas = porcao_arroz * alimentos.at[0, 'Proteínas (g)'] + \
-            porcao_feijao * alimentos.at[1, 'Proteínas (g)'] + \
-            porcao_frango * alimentos.at[2, 'Proteínas (g)']
+        layout = kivy.uix.boxlayout.BoxLayout(orientation='vertical')
+        layout.add_widget(self.username)
+        layout.add_widget(self.password)
+        layout.add_widget(self.email)
 
-# Calcular a ingestão total de gorduras
-gorduras = porcao_arroz * alimentos.at[0, 'Gorduras (g)'] + \
-           porcao_feijao * alimentos.at[1, 'Gorduras (g)'] + \
-           porcao_frango * alimentos.at[2, 'Gorduras (g)']
+        button = Button(text="Submit")
+        button.bind(on_press=self.submit)
+        layout.add_widget(button)
+        layout.add_widget(self.status)
 
-# Calcular a ingestão total de carboidratos
-carboidratos = porcao_arroz * alimentos.at[0, 'Carboidratos (g)'] + \
-               porcao_feijao * alimentos.at[1, 'Carboidratos (g)'] + \
-               porcao_frango * alimentos.at[2, 'Carboidratos (g)']
+        return layout
 
-# Exibir o resultado
-print("Ingestão total de calorias: ", calorias, "kcal")
-print("Ingestão total de proteínas: ", proteinas, "g")
-print("Ingestão total de gorduras: ", gorduras, "g")
-print("Ingestão total de carboidratos: ", carboidratos,"g")
+    def submit(self):
+        if self.username.text == "" or self.password.text == "" or self.email.text == "":
+            self.status.text = "Please enter all fields"
+        else:
+            print("Username:", self.username.text)
+            print("Password:", self.password.text)
+            print("Email:", self.email.text)
+            self.status.text = "Successful Registration"
+
+
+if __name__ == '__main__':
+    RegisterApp().run()
+
